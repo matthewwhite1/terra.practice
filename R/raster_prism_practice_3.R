@@ -20,7 +20,7 @@ for (i in seq_along(years)) {
   files <- list.files(year_folders[i], full.names = TRUE)
   t_max_files <- files[str_detect(files, "tmax.*bil$")]
   t_min_files <- files[str_detect(files, "tmin.*bil$")]
-  
+
   # Check ordering of dates
   t_max_dates <- str_extract(t_max_files, "[[:digit:]]{8}") |>
     as_date()
@@ -32,17 +32,17 @@ for (i in seq_along(years)) {
   if (!all(sort(t_min_dates) == t_min_dates)) {
     t_min_files <- t_min_files[order(t_min_dates)]
   }
-  
+
   # Load in rasters
   t_max_rast <- rast(t_max_files)
   t_min_rast <- rast(t_min_files)
-  
+
   # Logical statement with desired temps
   sap_day <- t_max_rast > 2.2 & t_min_rast < -1.1
-  
+
   # Use app()
   sap_prop <- app(sap_day, mean)
-  
+
   # Load into list
   sap_prop_list[i] <- sap_prop
 }

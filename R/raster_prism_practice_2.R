@@ -2,12 +2,12 @@ library(terra)
 library(tidyverse)
 
 # Download data using GitHub function
-# download_prism(data = c("tmin", "tmax"), start_date = as.Date("2017-01-01"), 
+# download_prism(data = c("tmin", "tmax"), start_date = as.Date("2017-01-01"),
 #                end_date = as.Date("2017-12-31"), t_res = "daily",
 #                out_dir = paste0(getwd(), "/PRISM_Data_2017"))
 
 # Create indices for desired data
-files <- list.files("PRISM_Data_2017/", full.names = TRUE)
+files <- list.files("Data_Raw/PRISM_Data_2017_Daily/", full.names = TRUE)
 t_max_files <- files[stringr::str_detect(files, "tmax.*bil$")]
 t_min_files <- files[stringr::str_detect(files, "tmin.*bil$")]
 
