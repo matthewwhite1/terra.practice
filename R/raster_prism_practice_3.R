@@ -1,5 +1,6 @@
 library(terra)
 library(tidyverse)
+library(sf)
 
 # Check ordering of year folders
 year_folders <- list.files("PRISM_Sap_Seasons_Data/", full.names = TRUE)
@@ -56,5 +57,10 @@ plot(sap_day_prop)
 writeRaster(sap_day_prop, "sap_day_prop.tif")
 
 # Read in file now that I'm on my laptop
-sap_day_prop <- rast("sap_day_prop.tif")
-plot(sap_day_prop)
+sap_day_prop <- rast("Data_Clean/sap_day_prop.tif")
+
+# Plot first year (2020)
+us_states <- read_sf("Data_Clean/US_State_Lines/cb_2018_us_state_500k.shp")
+plot(sap_day_prop[[30]])
+title(main = "Proportion of Ideal Maple Syrup Tapping Days, Jan-Apr 2020")
+lines(us_states)
