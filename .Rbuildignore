@@ -1,2 +1,7 @@
 ^terra\.practice\.Rproj$
 ^\.Rproj\.user$
+Data_Clean/
+Data_Raw/
+Scripts/
+Rmd/
+^LICENSE\.md$
