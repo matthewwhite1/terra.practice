@@ -3,7 +3,7 @@ library(tidyverse)
 library(sf)
 
 # Check ordering of year folders
-year_folders <- list.files("PRISM_Sap_Seasons_Data/", full.names = TRUE)
+year_folders <- list.files("Data_Raw/PRISM_Sap_Seasons_Data/", full.names = TRUE)
 years <- as.integer(str_extract(year_folders, "[[:digit:]]{4}"))
 if (!all(sort(years) == years)) {
   year_folders <- year_folders[order(years)]
