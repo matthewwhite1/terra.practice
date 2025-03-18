@@ -72,3 +72,9 @@ tmin_means_df_final <- tmin_means_df %>%
          Apr_tmin = rowMeans(select(., seq(5, length(tmin_means_df), by = 4)))) |>
   select(NAME, Jan_tmin, Feb_tmin, Mar_tmin, Apr_tmin)
 table_2 <- full_join(tmin_means_df_final, tmax_means_df_final, by = "NAME")
+
+# Export table
+write_csv(table_2, "Data_Clean/Table_2")
+
+# Import table
+table_2 <- read_csv("Data_Clean/Table_2")
