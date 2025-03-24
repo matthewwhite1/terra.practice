@@ -1,3 +1,8 @@
+##############################################################################
+# This script finds the maximum temperature differences across the US
+# in 2017 using monthly PRISM data.
+##############################################################################
+
 library(terra)
 library(stringr)
 

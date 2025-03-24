@@ -1,3 +1,9 @@
+##############################################################################
+# This script finds the proportion of days that are ideal for maple syrup
+# tapping across the US using daily PRISM data from January to April, 1981 to
+# 2020.
+##############################################################################
+
 library(terra)
 library(tidyverse)
 library(sf)

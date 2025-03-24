@@ -1,3 +1,8 @@
+##############################################################################
+# This script finds the sum of temperature sign changes across the US in 2017
+# using daily PRISM data.
+##############################################################################
+
 library(terra)
 library(tidyverse)
 
