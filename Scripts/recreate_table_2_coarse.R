@@ -1,5 +1,6 @@
 ################################################################################
-# This script recreates Table 2 from the research proposal.
+# This script recreates Table 2 from the research proposal, but this time
+# coarses the grid first with terra::aggregate().
 ################################################################################
 
 library(terra)
@@ -25,7 +26,8 @@ table_states <- c("Utah", "Idaho", "Montana", "South Dakota", "Iowa",
 
 # ChatGPT helped create this function
 compute_monthly_avg <- function(raster_files, states_vect) {
-  raster_stack <- rast(raster_files)
+  raster_stack <- rast(raster_files) |>
+    aggregate()
   monthly_avg_raster <- mean(raster_stack, na.rm = TRUE)
   state_avg <- terra::extract(monthly_avg_raster, states_vect, fun = mean, na.rm = TRUE)
   state_avg <- cbind(us_states, state_avg)
@@ -74,7 +76,7 @@ tmin_means_df_final <- tmin_means_df %>%
 table_2 <- full_join(tmin_means_df_final, tmax_means_df_final, by = "NAME")
 
 # Export table
-write_csv(table_2, "Data_Clean/Table_2")
+write_csv(table_2, "Data_Clean/Table_2_coarse")
 
 # Import table
-table_2 <- read_csv("Data_Clean/Table_2")
+table_2_coarse <- read_csv("Data_Clean/Table_2_coarse")
