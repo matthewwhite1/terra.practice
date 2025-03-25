@@ -34,6 +34,7 @@ example_maple <- read_csv("Data_Clean/example_maple_syrup_data.csv") |>
 maple_props <- inner_join(mean_props, example_maple, by = c("State", "Year"))
 
 # Make some plots
+options(scipen = 10000)
 ggplot(maple_props, aes(mean_sap_day_prop, ProductionInGallons, color = State)) +
   geom_point() +
   geom_smooth()
