@@ -78,6 +78,7 @@ ggplot(fresh_air_props_df, aes(Year, Mean, group = 1)) +
 # https://cran.r-project.org/web/packages/funtimes/vignettes/trendtests.html
 library(tseries)
 library(funtimes)
+library(trend)
 
 acf(fresh_air_props_df$Mean)
 acf(fresh_air_props_df$Mean, plot = FALSE)
@@ -88,4 +89,6 @@ arima(fresh_air_props_df$Mean, order = c(0, 0, 1)) # Pure MA
 arima(fresh_air_props_df$Mean, order = c(1, 0, 1)) # AR and MA
 
 notrend_test(fresh_air_props_df$Mean)
+
+sens.slope(fresh_air_props_df$Mean)
 ```
