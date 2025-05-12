@@ -1,0 +1,65 @@
+---
+title: "Rapp et. al Experimentation"
+output: html_document
+date: "2025-02-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Extract proportion of ideal tapping days from Rapp et. al locations
+
+```{r, message=FALSE, warning=FALSE, fig.height=10, fig.width=12}
+library(terra)
+library(tidyverse)
+library(sf)
+
+# Read in file
+sap_day_prop <- rast("../Data_Clean/sap_day_prop.tif")
+
+# Create vect of lats and lons
+# Leaving out Quebec because we only have US PRISM
+lats <- c(37.011, 38.231, 41.625, 42.532, 43.734)
+lons <- c(-82.676, -79.658, -87.081, -72.190, -72.249)
+locations <- terra::vect(data.frame(lon = lons, lat = lats))
+
+# Extract proportions at those locations
+rapp_props <- terra::extract(sap_day_prop, locations)
+colnames(rapp_props)[-1] <- 1991:2020
+
+# Prepare dataframe for plotting
+sites <- c("Divide Ridge", "Southernmost Maple",
+           "Indiana Dunes National Lakeshore", "Harvard Forest",
+           "Dartmouth Organic Farm")
+rapp_props[, 1] <- sites
+colnames(rapp_props)[1] <- "Site"
+rapp_props_long <- rapp_props |>
+  pivot_longer(-Site, names_to = "Year", values_to = "Mean")
+
+# Plot
+ggplot(rapp_props_long, aes(Year, Mean, col = Site, group = Site)) +
+  geom_line() +
+  geom_point() +
+  theme_bw() +
+  scale_color_viridis_d() +
+  scale_x_discrete(breaks = seq(1991, 2020, by = 2)) +
+  scale_y_continuous(breaks = seq(0.1, 0.6, by = 0.1), limits = c(0.1, 0.6)) +
+  ylab("Proportion") +
+  ggtitle("Proportion of Ideal Maple Syrup Tapping Days for Rapp et. al Locations")
+```
+
+## Time series analysis
+
+```{r, warning=FALSE}
+library(trend)
+
+sens.slope(rapp_props_long$Mean[rapp_props_long$Site == "Divide Ridge"])
+sens.slope(rapp_props_long$Mean[rapp_props_long$Site == "Southernmost Maple"])
+sens.slope(rapp_props_long$Mean[rapp_props_long$Site == "Indiana Dunes National Lakeshore"])
+sens.slope(rapp_props_long$Mean[rapp_props_long$Site == "Harvard Forest"])
+sens.slope(rapp_props_long$Mean[rapp_props_long$Site == "Dartmouth Organic Farm"])
+```
+
+Divide Ridge seems to the only farm where we have evidence of a negative trend
+over time.
