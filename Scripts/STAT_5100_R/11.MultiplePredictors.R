@@ -29,7 +29,6 @@ patient_txt <- "
 37 44 51 2.6   68 45 51 2.2
 59 37 53 2.1   92 28 46 1.8
 "
-# Read it in, naming the columns to match your SAS variables
 patient_almost <- read.table(
   text    = patient_txt,
   header  = FALSE,
