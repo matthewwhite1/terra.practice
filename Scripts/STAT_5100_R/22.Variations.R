@@ -97,4 +97,60 @@ summary(contam_lm)
 contam_rlm <- rlm(workhours ~ lotsize, data = contam)
 summary(contam_rlm)
 
-### To be continued...
+# Plot comparison between the three methods
+ggplot(contam, aes(lotsize, workhours)) +
+  geom_point() +
+  theme_bw() +
+  geom_abline(aes(intercept = toluca_lm$coefficients[1],
+                  slope = toluca_lm$coefficients[2],
+                  color = "Original OLS")) +
+  geom_abline(aes(intercept = contam_lm$coefficients[1],
+                  slope = contam_lm$coefficients[2],
+                  color = "Contaminated OLS")) +
+  geom_abline(aes(intercept = contam_rlm$coefficients[1],
+                  slope = contam_rlm$coefficients[2],
+                  color = "Contaminated Robust")) +
+  xlab("Lot Size") +
+  scale_y_continuous("Work Hours", breaks = seq(0, 1600, by = 200), limits = c(0, 1640)) +
+  scale_color_manual(breaks = c("Original OLS", "Contaminated OLS", "Contaminated Robust"),
+                     values = c("red", "blue", "yellow"),
+                     name = "Regression Method") +
+  ggtitle("Comparison of Methods") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+################################################################################
+
+# Generate random data
+set.seed(1234)
+temp <- data.frame(X1 = 10 + 10 * runif(50),
+                   X2 = 1 + 2 * runif(50),
+                   error = 10 * rnorm(50))
+
+# Define true relation
+temp1 <- temp |>
+  mutate(Y = 50 + 10 * X1^2 - 16 * exp(2 * X2) + error)
+
+# Look at plots
+g1 <- ggplot(temp1, aes(X1, Y)) +
+  geom_point() +
+  theme_bw()
+g2 <- ggplot(temp1, aes(X2, Y)) +
+  geom_point() +
+  theme_bw()
+g1 + g2
+
+# Try nonlinear regression
+my_nls <- nls(Y ~ b0 + b1 * X1^b2 + b3 * exp(b4 * X2),
+              data = temp1,
+              start = c(b0 = 100, b1 = 8, b2 = 3, b3 = -20, b4 = 4))
+summary(my_nls)
+
+# Plot
+nls_df <- data.frame(pred = my_nls$m$fitted(), Y = temp1$Y)
+ggplot(nls_df, aes(pred, Y)) +
+  geom_point() +
+  theme_bw() +
+  scale_x_continuous(breaks = seq(-4000, 4000, by = 2000), limits = c(-4000, 4000)) +
+  scale_y_continuous(breaks = seq(-4000, 4000, by = 2000), limits = c(-4000, 4000)) +
+  ggtitle("Plot of Nonlinear Data with its Fit") +
+  theme(plot.title = element_text(hjust = 0.5))
