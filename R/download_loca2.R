@@ -33,6 +33,8 @@ download_loca2 <- function(model, out_dir = paste0(getwd())) {
         file_url <- paste0(data_url, file_name)
         output_file <- paste0(var_dir, file_name)
         utils::download.file(file_url, output_file)
+        my_message <- paste0("Downloaded file to ", output_file)
+        print(my_message)
       }
     }
   }
