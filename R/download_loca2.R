@@ -1,5 +1,8 @@
 #' @export
 download_loca2 <- function(model, out_dir = paste0(getwd())) {
+  # Increase timeout boundary for large files
+  options(timeout = 21600) # 6 hours, just in case
+
   # Create directories
   model_dir <- paste0(out_dir, "/", model)
   dir.create(model_dir)
