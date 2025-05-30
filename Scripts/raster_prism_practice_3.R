@@ -60,13 +60,13 @@ sap_day_prop <- rast(sap_prop_list)
 plot(sap_day_prop)
 
 # Write it to a file for my laptop
-writeRaster(sap_day_prop, "sap_day_prop.tif")
+writeRaster(sap_day_prop, "Data_Clean/sap_day_prop.tif", overwrite = TRUE)
 
 # Read in file now that I'm on my laptop
 sap_day_prop <- rast("Data_Clean/sap_day_prop.tif")
 
-# Plot first year (2020)
+# Plot first year (1981)
 us_states <- read_sf("Data_Clean/US_State_Lines/cb_2018_us_state_500k.shp")
-plot(sap_day_prop[[30]])
-title(main = "Proportion of Ideal Maple Syrup Tapping Days, Jan-Apr 2020")
+plot(sap_day_prop[[1]])
+title(main = "Proportion of Ideal Maple Syrup Tapping Days, Jan-Apr 1981")
 lines(us_states)
