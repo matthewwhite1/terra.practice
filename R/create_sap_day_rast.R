@@ -22,12 +22,12 @@ create_sap_day_rast <- function() {
 
     # Check ordering of dates
     tmax_dates <- stringr::str_extract(tmax_files, "[[:digit:]]{8}") |>
-      as_date()
+      lubridate::as_date()
     if (!all(sort(tmax_dates) == tmax_dates)) {
       tmax_files <- tmax_files[order(tmax_dates)]
     }
     tmin_dates <- stringr::str_extract(tmin_files, "[[:digit:]]{8}") |>
-      as_date()
+      lubridate::as_date()
     if (!all(sort(tmin_dates) == tmin_dates)) {
       tmin_files <- tmin_files[order(tmin_dates)]
     }
@@ -44,6 +44,9 @@ create_sap_day_rast <- function() {
 
     # Load into list
     sap_prop_list[i] <- sap_prop
+
+    # Print year for progress
+    print(sort(years)[i])
   }
 
   # Combine all rasters into one raster with 30 layers

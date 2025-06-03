@@ -16,6 +16,7 @@ Imports:
     Rcpp,
     XML,
     httr,
-    terra
+    terra,
+    lubridate
 LinkingTo: 
     Rcpp
