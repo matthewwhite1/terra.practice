@@ -1,7 +1,7 @@
 #' @export
-create_sap_day_rast <- function() {
+create_sap_day_rast <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
   # Check ordering of year folders
-  year_folders <- list.files("Data_Raw/PRISM_Sap_Seasons_Data/", full.names = TRUE)
+  year_folders <- list.files(filepath, full.names = TRUE)
   years <- as.integer(stringr::str_extract(year_folders, "[[:digit:]]{4}"))
   if (!all(sort(years) == years)) {
     year_folders <- year_folders[order(years)]
@@ -43,15 +43,15 @@ create_sap_day_rast <- function() {
     sap_prop <- terra::app(sap_day, mean)
 
     # Load into list
-    sap_prop_list[i] <- sap_prop
+    sap_prop_list[[i]] <- sap_prop
 
     # Print year for progress
-    print(sort(years)[i])
+    print(paste0("Successfully Calculated ", sort(years)[i], " Values"))
   }
 
-  # Combine all rasters into one raster with 30 layers
+  # Combine all rasters into one raster with layer for each year
   sap_day_prop <- terra::rast(sap_prop_list)
 
-  # Write final raster file
-  terra::writeRaster(sap_day_prop, "Data_Clean/sap_day_prop.tif", overwrite = TRUE)
+  # Return final raster
+  sap_day_prop
 }

@@ -11,20 +11,19 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // sap_day_rast_helper
-NumericVector sap_day_rast_helper(NumericMatrix tmax_vals, NumericMatrix tmin_vals);
-RcppExport SEXP _terra_practice_sap_day_rast_helper(SEXP tmax_valsSEXP, SEXP tmin_valsSEXP) {
+double sap_day_rast_helper(NumericVector cell_vect);
+RcppExport SEXP _terra_practice_sap_day_rast_helper(SEXP cell_vectSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type tmax_vals(tmax_valsSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type tmin_vals(tmin_valsSEXP);
-    rcpp_result_gen = Rcpp::wrap(sap_day_rast_helper(tmax_vals, tmin_vals));
+    Rcpp::traits::input_parameter< NumericVector >::type cell_vect(cell_vectSEXP);
+    rcpp_result_gen = Rcpp::wrap(sap_day_rast_helper(cell_vect));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_terra_practice_sap_day_rast_helper", (DL_FUNC) &_terra_practice_sap_day_rast_helper, 2},
+    {"_terra_practice_sap_day_rast_helper", (DL_FUNC) &_terra_practice_sap_day_rast_helper, 1},
     {NULL, NULL, 0}
 };
 

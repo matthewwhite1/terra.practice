@@ -1,7 +1,7 @@
 #' @export
-create_sap_day_rast_rcpp <- function() {
+create_sap_day_rast_rcpp <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
   # Check ordering of year folders
-  year_folders <- list.files("Data_Raw/PRISM_Sap_Seasons_Data/", full.names = TRUE)
+  year_folders <- list.files(filepath, full.names = TRUE)
   years <- as.integer(stringr::str_extract(year_folders, "[[:digit:]]{4}"))
   if (!all(sort(years) == years)) {
     year_folders <- year_folders[order(years)]
@@ -36,27 +36,22 @@ create_sap_day_rast_rcpp <- function() {
     tmax_rast <- terra::rast(tmax_files)
     tmin_rast <- terra::rast(tmin_files)
 
-    # Extract raster values
-    tmax_vals <- as.matrix(terra::values(tmax_rast))
-    tmin_vals <- as.matrix(terra::values(tmin_rast))
+    # Combine into one raster
+    t_combined <- c(tmax_rast, tmin_rast)
 
     # Use rcpp helper function to find proportion
-    sap_prop <- sap_day_rast_helper(tmax_vals, tmin_vals)
-
-    # Convert proportion back into raster from vector
-    sap_prop_rast <- terra::rast(tmax_files[1])
-    terra::values(sap_prop_rast) <- sap_prop
+    sap_prop <- terra::app(t_combined, sap_day_rast_helper)
 
     # Load into list
-    sap_prop_list[i] <- sap_prop_rast
+    sap_prop_list[[i]] <- sap_prop
 
     # Print year for progress
-    print(sort(years)[i])
+    print(paste0("Successfully Calculated ", sort(years)[i], " Values"))
   }
 
-  # Combine all rasters into one raster with 30 layers
+  # Combine all rasters into one raster with layer for each year
   sap_day_prop <- terra::rast(sap_prop_list)
 
-  # Write final raster file
-  terra::writeRaster(sap_day_prop, "Data_Clean/sap_day_prop_rcpp.tif", overwrite = TRUE)
+  # Return final raster
+  sap_day_prop
 }

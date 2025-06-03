@@ -3,29 +3,30 @@ using namespace Rcpp;
 
 //' @export
 // [[Rcpp::export]]
-NumericVector sap_day_rast_helper(NumericMatrix tmax_vals,
-                                  NumericMatrix tmin_vals) {
-  // Get dimensions
-  int num_cells = tmax_vals.nrow();
-  int num_days = tmax_vals.ncol();
+double sap_day_rast_helper(NumericVector cell_vect) {
+  // Initialize count variable and vector length
+  int count = 0;
+  int valid = 0;
+  int num_days = cell_vect.length() / 2;
 
-  // Define inequality results vector
-  NumericVector result(num_cells);
-
-  // Perform inequality for each value
-  for (int cell = 0; cell < num_cells; cell++) {
-    int count = 0;
-    for (int day = 0; day < num_days; day++) {
-      if (NumericMatrix::is_na(tmax_vals(cell, day)) || NumericMatrix::is_na(tmin_vals(cell, day))) {
-        continue;
-      }
-      if (tmax_vals(cell, day) > 2.2 && tmin_vals(cell, day) < -1.1) {
-        count += 1;
-      }
+  // Loop through each cell value
+  for (int i = 0; i < num_days; i++) {
+    // Skip if NA
+    if (NumericVector::is_na(cell_vect[i]) || NumericVector::is_na(cell_vect[i + num_days])) {
+      continue;
     }
-    result[cell] = count / num_days;
+    // Increment valid days count
+    valid++;
+    // If tmax > 2.2 and tmin < -1.1 at same coordinates, increment count
+    if (cell_vect[i] > 2.2 && cell_vect[i + num_days] < -1.1) {
+      count += 1;
+    }
   }
 
-  // Return proportion vector
-  return result;
+  // Return proportion
+  if (valid == 0) {
+    return 0;
+  } else {
+    return count / valid;
+  }
 }

@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
-sap_day_rast_helper <- function(tmax_vals, tmin_vals) {
-    .Call(`_terra_practice_sap_day_rast_helper`, tmax_vals, tmin_vals)
+sap_day_rast_helper <- function(cell_vect) {
+    .Call(`_terra_practice_sap_day_rast_helper`, cell_vect)
 }
 
