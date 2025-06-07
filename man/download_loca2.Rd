@@ -7,7 +7,13 @@
 \url{https://cirrus.ucsd.edu/~pierce/LOCA2/NAmer/}
 }
 \usage{
-download_loca2(model, run = 1, scenario = "ssp585", out_dir = paste0(getwd()))
+download_loca2(
+  model,
+  run = 1,
+  scenario = "ssp585",
+  var = c("pr", "tasmax", "tasmin"),
+  out_dir = paste0(getwd())
+)
 }
 \arguments{
 \item{model}{A character vector of models. These must exactly
@@ -19,6 +25,11 @@ run of the model, and so on.}
 
 \item{scenario}{A character vector of future climate scenarios. Each value
 in this vector must be either ssp245, ssp370, or ssp585.}
+
+\item{var}{A character vector of variables to download. Each value in this
+vector must be either pr (precipitation), tasmax (maximum temperature),
+tasmin (minimum temperature), or DTR (difference between maximum and
+minimum temperature).}
 
 \item{out_dir}{The name of the output directory that will store the
 downloaded files.}
@@ -35,7 +46,10 @@ contain some large files.
 }
 \examples{
 # Download all files from first LOCA2 model
-download_loca2(model = "ACCESS-CM2", run = 1, scenario = "ssp585")
+download_loca2(model = "ACCESS-CM2",
+               run = 1,
+               scenario = "ssp585",
+               var = c("pr", "tasmax", "tasmin"))
 
 # Download all files with multiple models, runs, and scenarios
 download_loca2(model = c("ACCESS-CM2", "ACCESS-ESM1-5", "AWI-CM-1-1-MR"),

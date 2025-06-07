@@ -1,5 +1,3 @@
-# TODO: Add argument to specify which variables to download.
-
 #' Download LOCA2 netCDF files
 #'
 #' This function can be used to download daily netCDF files from LOCA2.
@@ -11,6 +9,10 @@
 #'   run of the model, and so on.
 #' @param scenario A character vector of future climate scenarios. Each value
 #'   in this vector must be either ssp245, ssp370, or ssp585.
+#' @param var A character vector of variables to download. Each value in this
+#'   vector must be either pr (precipitation), tasmax (maximum temperature),
+#'   tasmin (minimum temperature), or DTR (difference between maximum and
+#'   minimum temperature).
 #' @param out_dir The name of the output directory that will store the
 #'   downloaded files.
 #'
@@ -26,14 +28,21 @@
 #'
 #' @examples
 #' # Download all files from first LOCA2 model
-#' download_loca2(model = "ACCESS-CM2", run = 1, scenario = "ssp585")
+#' download_loca2(model = "ACCESS-CM2",
+#'                run = 1,
+#'                scenario = "ssp585",
+#'                var = c("pr", "tasmax", "tasmin"))
 #'
 #' # Download all files with multiple models, runs, and scenarios
 #' download_loca2(model = c("ACCESS-CM2", "ACCESS-ESM1-5", "AWI-CM-1-1-MR"),
 #'                run = c(1, 2, 3),
 #'                scenario = c("ssp245", "ssp370", "ssp585"))
 #' @export
-download_loca2 <- function(model, run = 1, scenario = "ssp585", out_dir = paste0(getwd())) {
+download_loca2 <- function(model,
+                           run = 1,
+                           scenario = "ssp585",
+                           var = c("pr", "tasmax", "tasmin"),
+                           out_dir = paste0(getwd())) {
   # Get all model names for error checking
   model_names <- get_loca2_model_names()
 
@@ -41,11 +50,13 @@ download_loca2 <- function(model, run = 1, scenario = "ssp585", out_dir = paste0
   if (!is.numeric(run) | !all(run %% 1 == 0)) {
     stop("The run argument must be a positive integer.")
   } else if (!all(scenario %in% c("ssp245", "ssp370", "ssp585"))) {
-    stop("The scenario must be ssp245, ssp370, or ssp585.")
+    stop("Each scenario must be ssp245, ssp370, or ssp585.")
   } else if (!all(model %in% model_names)) {
     stop("Invalid model name (see get_loca2_model_names()).")
   } else if (!dir.exists(out_dir)) {
     stop("Out directory does not exist.")
+  } else if (!all(var %in% c("pr", "tasmax", "tasmin", "DTR"))) {
+    stop("Each variable must be pr, tasmax, tasmin, or DTR.")
   }
 
   # Increase timeout boundary for large files
@@ -68,16 +79,16 @@ download_loca2 <- function(model, run = 1, scenario = "ssp585", out_dir = paste0
 
       # Throw an error if run doesn't exist
       if (!RCurl::url.exists(model_url)) {
-        print(paste0("Run number ", given_run, " for model ", given_model, " does not exist."))
+        warning(paste0("Run number ", given_run, " for model ", given_model, " does not exist."))
         next
       }
 
       # For both historical and future...
       for (period in c("historical", scenario)) {
         # For each variable...
-        for (var_name in c("pr/", "tasmax/", "tasmin/")) {
+        for (var_name in var) {
           # Create variable directory
-          var_dir <- paste0(model_dir, "/0p0625deg/r1i1p1f1/", period, "/", var_name)
+          var_dir <- paste0(model_dir, "/0p0625deg/", run_full, period, "/", var_name)
           dir.create(var_dir, recursive = TRUE)
 
           # Find desired files
@@ -94,11 +105,10 @@ download_loca2 <- function(model, run = 1, scenario = "ssp585", out_dir = paste0
 
           # Download desired files
           for (file_name in data_table$Name) {
-            file_url <- paste0(data_url, file_name)
-            output_file <- paste0(var_dir, file_name)
-            utils::download.file(file_url, output_file)
-            my_message <- paste0("Downloaded file to ", output_file)
-            print(my_message)
+            file_url <- paste0(data_url, "/", file_name)
+            output_file <- paste0(var_dir, "/", file_name)
+            utils::download.file(file_url, output_file, mode = "wb")
+            message(paste0("Downloaded file to ", output_file))
           }
         }
       }
