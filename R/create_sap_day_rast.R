@@ -52,6 +52,9 @@ create_sap_day_rast <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
   # Combine all rasters into one raster with layer for each year
   sap_day_prop <- terra::rast(sap_prop_list)
 
+  # Set names of raster layers
+  names(sap_day_prop) <- sort(years)
+
   # Return final raster
   sap_day_prop
 }

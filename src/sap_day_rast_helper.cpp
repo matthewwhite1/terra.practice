@@ -25,8 +25,8 @@ double sap_day_rast_helper(NumericVector cell_vect) {
 
   // Return proportion
   if (valid == 0) {
-    return 0;
+    return NA_REAL;
   } else {
-    return count / valid;
+    return (double)count / valid;
   }
 }
