@@ -1,5 +1,5 @@
 #' @export
-create_sap_day_rast <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
+prism_sap_day_rcpp <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
   # Check ordering of year folders
   year_folders <- list.files(filepath, full.names = TRUE)
   years <- as.integer(stringr::str_extract(year_folders, "[[:digit:]]{4}"))
@@ -36,11 +36,11 @@ create_sap_day_rast <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
     tmax_rast <- terra::rast(tmax_files)
     tmin_rast <- terra::rast(tmin_files)
 
-    # Logical statement with desired temps
-    sap_day <- tmax_rast > 2.2 & tmin_rast < -1.1
+    # Combine into one raster
+    t_combined <- c(tmax_rast, tmin_rast)
 
-    # Use app()
-    sap_prop <- terra::app(sap_day, mean)
+    # Use rcpp helper function to find proportion
+    sap_prop <- terra::app(t_combined, sap_day_rast_helper)
 
     # Load into list
     sap_prop_list[[i]] <- sap_prop
