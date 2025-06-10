@@ -51,8 +51,8 @@ download_loca2 <- function(model,
   # Argument error checking
   if (!is.numeric(run) | !all(run %% 1 == 0)) {
     stop("The run argument must be a positive integer.")
-  } else if (!all(scenario %in% c("ssp245", "ssp370", "ssp585"))) {
-    stop("Each scenario must be ssp245, ssp370, or ssp585.")
+  } else if (!all(scenario %in% c("historical", "ssp245", "ssp370", "ssp585"))) {
+    stop("Each scenario must be historical, ssp245, ssp370, or ssp585.")
   } else if (!all(model %in% model_names)) {
     stop("Invalid model name (see get_loca2_model_names()).")
   } else if (!dir.exists(out_dir)) {
