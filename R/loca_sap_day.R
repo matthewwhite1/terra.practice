@@ -24,8 +24,8 @@ loca_sap_day <- function(filepath) {
     }
 
     # Load in rasters
-    tmax_rast <- rast(tmax_files)
-    tmin_rast <- rast(tmin_files)
+    tmax_rast <- terra::rast(tmax_files)
+    tmin_rast <- terra::rast(tmin_files)
 
     # Logical statement with desired temps
     sap_day <- tmax_rast > 2.2 & tmin_rast < -1.1
