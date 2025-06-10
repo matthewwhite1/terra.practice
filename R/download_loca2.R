@@ -1,3 +1,5 @@
+#' TODO: Where else could this fail? If the servers are down?
+
 #' Download LOCA2 netCDF files
 #'
 #' This function can be used to download daily netCDF files from LOCA2.
@@ -40,7 +42,7 @@
 #' @export
 download_loca2 <- function(model,
                            run = 1,
-                           scenario = "ssp585",
+                           scenario = c("historical", "ssp585"),
                            var = c("pr", "tasmax", "tasmin"),
                            out_dir = paste0(getwd())) {
   # Get all model names for error checking
@@ -73,7 +75,7 @@ download_loca2 <- function(model,
 
     # For each given run...
     for (given_run in run) {
-      # Get list of directories inside model directory
+      # Create run URL
       run_full <- paste0("r", given_run, "i1p1f1/")
       model_url <- paste0(base_url, given_model, "/0p0625deg/", run_full)
 
@@ -84,7 +86,16 @@ download_loca2 <- function(model,
       }
 
       # For both historical and future...
-      for (period in c("historical", scenario)) {
+      for (period in scenario) {
+        # Create scenario URL
+        period_url <- paste0(model_url, period)
+
+        # Throw an error if scenario doesn't exist
+        if (!RCurl::url.exists(period_url)) {
+          warning(paste0("Climate scenario ", period, " for model ", given_model, " for run ", given_run, " does not exist."))
+          next
+        }
+
         # For each variable...
         for (var_name in var) {
           # Create variable directory

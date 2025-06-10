@@ -1,4 +1,7 @@
 # TODO: Maybe only compute for the sap season to save on time? Or maybe let the user decide that.
+# TODO: Try terra::split() and then lapply with terra::app()
+# TODO: Try this on a subset of years first
+# TODO: Have this running over the weekend, on all runs of the first loca model
 
 #' @export
 loca_sap_day <- function(filepath) {
