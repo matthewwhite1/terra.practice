@@ -5,6 +5,11 @@ prism_t_rast <- function(filepath, folders = TRUE) {
     stop("Given directory does not exist.")
   }
 
+  # Ensure folders argument is logical
+  if (!is.logical(folders)) {
+    stop("Folders argument must either be TRUE or FALSE.")
+  }
+
   # Define years vector based on whether there are year folders
   if (folders) {
     # Check ordering of year folders

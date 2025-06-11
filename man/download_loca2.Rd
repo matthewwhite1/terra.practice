@@ -2,7 +2,8 @@
 % Please edit documentation in R/download_loca2.R
 \name{download_loca2}
 \alias{download_loca2}
-\title{Download LOCA2 netCDF files}
+\title{TODO: Where else could this fail? If the servers are down?
+Download LOCA2 netCDF files}
 \source{
 \url{https://cirrus.ucsd.edu/~pierce/LOCA2/NAmer/}
 }
@@ -10,7 +11,7 @@
 download_loca2(
   model,
   run = 1,
-  scenario = "ssp585",
+  scenario = c("historical", "ssp585"),
   var = c("pr", "tasmax", "tasmin"),
   out_dir = paste0(getwd())
 )
