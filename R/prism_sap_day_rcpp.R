@@ -1,4 +1,4 @@
-#' @export
+# OLD FUNCTION
 prism_sap_day_rcpp <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
   # Check ordering of year folders
   year_folders <- list.files(filepath, full.names = TRUE)

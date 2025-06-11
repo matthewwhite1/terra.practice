@@ -1,9 +1,4 @@
-# TODO: What if tmax and tmin are different lengths (different num of days)?
-# TODO: Make a prism file function and a loca file function, each take two inputs (two rasters).
-          # assign time elements to these in the file format functions
-# TODO: Make arguments for temp threshold
-
-#' @export
+# OLD FUNCTION
 prism_sap_day <- function(filepath = "Data_Raw/PRISM_Sap_Seasons_Data/") {
   # Check ordering of year folders
   year_folders <- list.files(filepath, full.names = TRUE)

@@ -1,8 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' @export
-// [[Rcpp::export]]
+// OLD FUNCTION
 double sap_day_rast_helper(NumericVector cell_vect) {
   // Initialize count variable and vector length
   int count = 0;
