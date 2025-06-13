@@ -30,15 +30,15 @@
 #'
 #' @examples
 #' # Download all files from first LOCA2 model
-#' download_loca2(model = "ACCESS-CM2",
-#'                run = 1,
-#'                scenario = "ssp585",
-#'                var = c("pr", "tasmax", "tasmin"))
+#' # download_loca2(model = "ACCESS-CM2",
+#' #                run = 1,
+#' #                scenario = "ssp585",
+#' #                var = c("pr", "tasmax", "tasmin"))
 #'
 #' # Download all files with multiple models, runs, and scenarios
-#' download_loca2(model = c("ACCESS-CM2", "ACCESS-ESM1-5", "AWI-CM-1-1-MR"),
-#'                run = c(1, 2, 3),
-#'                scenario = c("ssp245", "ssp370", "ssp585"))
+#' # download_loca2(model = c("ACCESS-CM2", "ACCESS-ESM1-5", "AWI-CM-1-1-MR"),
+#' #                run = c(1, 2, 3),
+#' #                scenario = c("ssp245", "ssp370", "ssp585"))
 #' @export
 download_loca2 <- function(model,
                            run = 1,
