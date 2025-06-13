@@ -1,3 +1,31 @@
+# TODO: Add more error checking for this function
+
+#' Calculate Ideal Sap Days from Temperature Rasters
+#'
+#' Maple sap flows the most on days where temperatures are oscillating between
+#'   freezing and thawing, known as the freeze/thaw cycle. This function uses
+#'   tmax and tmin rasters (potentially loaded in from [loca_t_rast()] or
+#'   [prism_t_rast()]) to calculate the proportion and sum of days in each year
+#'   that are ideal for maple sap tapping. Using a 30-year record of sap flow
+#'   and weather observations at the Uihlein Forest, Lake Placid, NY, sap flow
+#'   occurred on 80% of the days when the minimum temperature fell below
+#'   -1.1 °C and maximum temperature exceeded 2.2 °C, which is where the
+#'   default values for the temperature threshold come from (Skinner et al.
+#'   2010).
+#'
+#' @param tmax_rast A raster stack of tmax values that must have terra::time
+#'   values containing date information to subset by year.
+#' @param tmin_rast A raster stack of tmin values that must have terra::time
+#'   values containing date information to subset by year.
+#' @param t_upper The upper temperature value for the freeze/thaw cycle that
+#'   will be used in a logical statement to find ideal sap tapping days.
+#' @param t_lower The lower temperature value for the freeze/thaw cycle that
+#'   will be used in a logical statement to find ideal sap tapping days.
+#'
+#' @return A list of length two - a raster stack of the proportion of ideal
+#'   sap tapping days per year, and a raster stack of the sum of ideal sap
+#'   tapping days per year.
+#'
 #' @export
 sap_day <- function(tmax_rast, tmin_rast, t_upper = 2.2, t_lower = -1.1) {
   # Extract years for subsetting

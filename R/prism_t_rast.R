@@ -1,3 +1,13 @@
+#' Load PRISM tmax and tmin files into rasters
+#'
+#' @param filepath Character file path where files are located.
+#' @param folders Boolean. If TRUE, the filepath contains folders that are
+#'   organized by year (1981, 1982, etc.). If FALSE, the filepath must contain
+#'   tmax and tmin .bil files.
+#'
+#' @return A list of length two - the tmax raster stack and the tmin raster
+#'   stack.
+#'
 #' @export
 prism_t_rast <- function(filepath, folders = TRUE) {
   # Check if directory exists

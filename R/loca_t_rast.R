@@ -1,3 +1,13 @@
+#' Load LOCA2 tmax and tmin files into rasters
+#'
+#' @param filepath Character file path where files are located. This should
+#'   be the folder in which the climate scenario folders are contained (historical,
+#'   ssp585, etc.). For example, "ACCESS-CM2/0p0625deg/r1i1p1f1" would be
+#'   valid for this argument.
+#'
+#' @return A list of length two - the tmax raster stack and the tmin raster
+#'   stack.
+#'
 #' @export
 loca_t_rast <- function(filepath) {
   # Check if directory exists
