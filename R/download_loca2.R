@@ -49,7 +49,7 @@ download_loca2 <- function(model,
   model_names <- get_loca2_model_names()
 
   # Argument error checking
-  if (!is.numeric(run) | !all(run %% 1 == 0)) {
+  if (!is.numeric(run) || !all(run %% 1 == 0)) {
     stop("The run argument must be a positive integer.")
   } else if (!all(scenario %in% c("historical", "ssp245", "ssp370", "ssp585"))) {
     stop("Each scenario must be historical, ssp245, ssp370, or ssp585.")
@@ -70,7 +70,7 @@ download_loca2 <- function(model,
   # For each given model...
   for (given_model in model) {
     # Create model directory
-    model_dir <- paste0(out_dir, "/", given_model)
+    model_dir <- file.path(out_dir, given_model)
     dir.create(model_dir, recursive = TRUE)
 
     # For each given run...
@@ -99,7 +99,7 @@ download_loca2 <- function(model,
         # For each variable...
         for (var_name in var) {
           # Create variable directory
-          var_dir <- paste0(model_dir, "/0p0625deg/", run_full, period, "/", var_name)
+          var_dir <- file.path(model_dir, "0p0625deg", run_full, period, var_name)
           dir.create(var_dir, recursive = TRUE)
 
           # Find desired files
@@ -117,7 +117,7 @@ download_loca2 <- function(model,
           # Download desired files
           for (file_name in data_table$Name) {
             file_url <- paste0(data_url, "/", file_name)
-            output_file <- paste0(var_dir, "/", file_name)
+            output_file <- file.path(var_dir, file_name)
             utils::download.file(file_url, output_file, mode = "wb")
             message(paste0("Downloaded file to ", output_file))
           }
