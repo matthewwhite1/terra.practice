@@ -1,5 +1,3 @@
-# TODO: Add more error checking for this function
-
 #' Calculate Ideal Sap Days from Temperature Rasters
 #'
 #' Maple sap flows the most on days where temperatures are oscillating between
@@ -28,6 +26,17 @@
 #'
 #' @export
 sap_day <- function(tmax_rast, tmin_rast, t_upper = 2.2, t_lower = -1.1) {
+  # Error checking
+  if (class(tmax_rast) != "SpatRaster" || class(tmin_rast) != "SpatRaster") {
+    stop("tmax_rast and tmin_rast must be terra rasters.")
+  } else if (!all(terra::time(tmax_rast) == terra::time(tmin_rast))) {
+    stop("tmax_rast and tmin_rast must have identical terra::time values.")
+  } else if (!is.numeric(t_upper)) {
+    stop("t_upper must be numeric.")
+  } else if (!is.numeric(t_lower)) {
+    stop("t_lower must be numeric.")
+  }
+
   # Extract years for subsetting
   dates <- terra::time(tmax_rast)
   years <- as.integer(stringr::str_extract(dates, "[[:digit:]]{4}"))
