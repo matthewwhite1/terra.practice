@@ -51,3 +51,8 @@ ggplot(fresh_air_sum_df, aes(Year, Sum, color = Period)) +
   ggtitle("Sum of Ideal Maple Syrup Tapping Days for Fresh Air Fund Maple Farm")
 
 sens.slope(fresh_air_sum_df$Sum) # p-value = 2.135e-08
+
+
+# Export onto SSD
+writeRaster(loca_sap$proportion, "D:/Data/LOCA_prop_test.tif")
+writeRaster(loca_sap$sum, "D:/Data/LOCA_sum_test.tif")
