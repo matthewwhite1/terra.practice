@@ -87,3 +87,8 @@ ggplot(rapp_props_df, aes(Year, Mean, color = Period)) +
 # Export onto SSD
 writeRaster(loca_sap$proportion, "D:/Data/LOCA_prop_test.tif", overwrite = TRUE)
 writeRaster(loca_sap$sum, "D:/Data/LOCA_sum_test.tif", overwrite = TRUE)
+
+# Read back into R
+loca_sap <- list(proportion = 0, sum = 0)
+loca_sap$proportion <- terra::rast("D:/Data/LOCA_prop_test.tif")
+loca_sap$sum <- terra::rast("D:/Data/LOCA_sum_test.tif")
