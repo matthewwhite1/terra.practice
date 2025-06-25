@@ -7,8 +7,9 @@ get_maple_farms <- function() {
     unclass()
   us_states <- us_states$STUSPS
 
-  # Initialize empty farm name vector
+  # Initialize empty vectors
   farms <- c()
+  addresses <- c()
 
   # Define base url
   base_url <- "https://www.maplesyrupfarms.org/"
@@ -27,21 +28,45 @@ get_maple_farms <- function() {
 
     # For each region...
     for (region_link in state_links) {
-      # Get maple farms
+      # Create and check url
       region_url <- paste0(base_url, region_link)
       if (!RCurl::url.exists(region_url)) {
         warning(paste0("URL ", region_url, " does not exist."))
         next
       }
+
+      # Extract list text from html
       region_page <- rvest::read_html(region_url)
-      farm_names <- rvest::html_elements(region_page, ".farm") |>
+      page_text <- rvest::html_elements(region_page, "li") |>
         rvest::html_text2()
 
-      # Add to farms vector
+      # Define regex patterns
+      address_pattern <- "\\d+.+,.+,\\s[:alpha:]{2}\\s\\d{5}"
+      farm_pattern <- "^.+?\\s?(-|\\n)"
+
+      # Extract farm names and addresses
+      farm_addresses <- stringr::str_extract(page_text, address_pattern)
+      farm_names <- stringr::str_extract(page_text, farm_pattern)
+
+      # Filter for found addresses
+      farm_names <- farm_names[!is.na(farm_addresses)]
+      farm_addresses <- farm_addresses[!is.na(farm_addresses)]
+
+      # Remove hyphen at end of name
+      farm_names <- stringr::str_trim(stringr::str_remove(farm_names, "-$"))
+
+      # Check if not same length
+      if (length(farm_names) != length(farm_addresses)) {
+        warning(paste0("Oopsies for ", region_link))
+        next
+      }
+
+      # Add to vectors
       farms <- c(farms, farm_names)
+      addresses <- c(addresses, farm_addresses)
     }
   }
 
-  # Return farms vector
-  farms[farms != ""]
+  # Return data frame
+  data.frame(farm = farms, address = addresses)
 }
