@@ -10,7 +10,7 @@
 #'   first run of the model (r1i1p1f1), a run of 2 corresponds to the second
 #'   run of the model, and so on.
 #' @param scenario A character vector of future climate scenarios. Each value
-#'   in this vector must be either ssp245, ssp370, or ssp585.
+#'   in this vector must be either historical, ssp245, ssp370, or ssp585.
 #' @param var A character vector of variables to download. Each value in this
 #'   vector must be either pr (precipitation), tasmax (maximum temperature),
 #'   tasmin (minimum temperature), or DTR (difference between maximum and

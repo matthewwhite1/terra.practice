@@ -4,19 +4,27 @@
 #'   be the folder in which the climate scenario folders are contained (historical,
 #'   ssp585, etc.). For example, "ACCESS-CM2/0p0625deg/r1i1p1f1" would be
 #'   valid for this argument.
+#' @param scenario A character vector of future climate scenarios. Each value
+#'   in this vector must be either historical, ssp245, ssp370, or ssp585.
 #'
 #' @return A list of length two - the tmax raster stack and the tmin raster
 #'   stack.
 #'
 #' @export
-loca_t_rast <- function(filepath) {
+loca_t_rast <- function(filepath, scenario = c("historical", "ssp585")) {
   # Check if directory exists
   if (!dir.exists(filepath)) {
     stop("Given directory does not exist.")
   }
 
-  # List folders (historical, scenarios)
-  scenario_folders <- list.files(filepath, full.names = TRUE)
+  # Get scenario file paths
+  scenario_folders <- c()
+  for (period in scenario) {
+    scenario_folders <- c(scenario_folders, file.path(filepath, period))
+    if (!dir.exists(file.path(filepath, period))) {
+      stop(paste0("Given scenario folder does not exist for scenario ", period))
+    }
+  }
 
   # Initialize empty lists
   tmax_list <- vector("list", length(scenario_folders))
