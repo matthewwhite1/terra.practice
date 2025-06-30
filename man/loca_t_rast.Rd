@@ -4,13 +4,16 @@
 \alias{loca_t_rast}
 \title{Load LOCA2 tmax and tmin files into rasters}
 \usage{
-loca_t_rast(filepath)
+loca_t_rast(filepath, scenario = c("historical", "ssp585"))
 }
 \arguments{
 \item{filepath}{Character file path where files are located. This should
 be the folder in which the climate scenario folders are contained (historical,
 ssp585, etc.). For example, "ACCESS-CM2/0p0625deg/r1i1p1f1" would be
 valid for this argument.}
+
+\item{scenario}{A character vector of future climate scenarios. Each value
+in this vector must be either historical, ssp245, ssp370, or ssp585.}
 }
 \value{
 A list of length two - the tmax raster stack and the tmin raster
