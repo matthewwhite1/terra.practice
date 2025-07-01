@@ -1,5 +1,5 @@
 #' @export
-get_maple_farms <- function(us_states = get_us_states()) {
+get_canada_maple_farms <- function() {
   # Initialize empty vectors
   farms <- c()
   addresses <- c()
@@ -7,20 +7,25 @@ get_maple_farms <- function(us_states = get_us_states()) {
   # Define base url
   base_url <- "https://www.maplesyrupfarms.org/"
 
-  # For each state...
-  for (state in us_states) {
-    # Define state url and read it
-    state_url <- paste0(base_url, state, ".php")
-    page <- rvest::read_html(state_url)
+  # Define province names
+  # Besides Newfoundland, Prince Edward Island, Quebec, and Yukon (added later)
+  provinces <- c("CNAL", "CNBC", "CNMB", "CNNB", "CNNS", "CNON", "CNSK")
+
+  # For each province...
+  for (province in provinces) {
+    # Define province url and read it
+    province_url <- paste0(base_url, province, ".php")
+    page <- rvest::read_html(province_url)
 
     # Get state regions
-    state_links <- rvest::html_elements(page, "a") |>
+    province_links <- rvest::html_elements(page, "a") |>
       rvest::html_attr("href")
-    state_links <- state_links[stringr::str_detect(state_links, paste0("^", state, ".*\\.php$"))]
-    state_links <- state_links[!is.na(state_links)]
+    province_links <- province_links[stringr::str_detect(province_links, paste0("^", province, ".*\\.php$"))]
+    province_links <- province_links[!is.na(province_links)]
+    province_links <- c(province_links, "CNNF.php", "CNPE.php", "CNQC.php", "CNYK.php")
 
     # For each region...
-    for (region_link in state_links) {
+    for (region_link in province_links) {
       # Create and check url
       region_url <- paste0(base_url, region_link)
       if (!RCurl::url.exists(region_url)) {
@@ -34,7 +39,7 @@ get_maple_farms <- function(us_states = get_us_states()) {
         rvest::html_text2()
 
       # Define regex patterns
-      address_pattern <- "\\d+.+,.+,\\s[:alpha:]{2}\\s\\d{5}"
+      address_pattern <- "\\d+.+,.+,\\s[:alpha:]{2}\\s.{3}\\s.{3}"
       farm_pattern <- "^.+?\\s?(-|\\n)"
 
       # Extract farm names and addresses
@@ -60,6 +65,8 @@ get_maple_farms <- function(us_states = get_us_states()) {
     }
   }
 
-  # Return data frame
+  # Return data frame with removed duplicates
+  farms <- unique(farms)
+  addresses <- unique(addresses)
   data.frame(farm = farms, address = addresses)
 }
