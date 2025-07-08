@@ -3,6 +3,8 @@ library(tidyverse)
 library(trend)
 library(sf)
 library(patchwork)
+library(rnaturalearth)
+library(rnaturalearthdata)
 
 # Calculate ideal sap days for first run of first LOCA2 model
 loca_rast <- loca_t_rast("D:/Data/LOCA2/ACCESS-CM2/0p0625deg/r1i1p1f1")
@@ -25,6 +27,22 @@ plot(loca_sap$proportion[[1]])
 lines(us_states)
 plot(fresh_air, add = TRUE, col = "red")
 plot(rapp_locations, add = TRUE, col = "orange")
+
+# Plot Rapp sites on regular map
+world <- ne_countries(scale = "medium", returnclass = "sf")
+north_america <- world %>%
+  filter(region_un == "Americas", name %in% c("United States of America", "Canada"))
+us_states <- ne_states(country = "United States of America", returnclass = "sf")
+canada_provinces <- ne_states(country = "Canada", returnclass = "sf")
+rapp_sf <- st_as_sf(rapp_locations, coords = c("lon", "lat"), crs = 4326)
+st_crs(rapp_sf) <- st_crs(north_america)
+ggplot() +
+  geom_sf(data = north_america, fill = "grey95", color = "black", size = 0.2) +
+  geom_sf(data = us_states, fill = NA, color = "darkgray", size = 0.3) +
+  geom_sf(data = canada_provinces, fill = NA, color = "darkgray", size = 0.3) +
+  geom_sf(data = rapp_sf, color = "orange") +
+  coord_sf(xlim = c(-90, -60), ylim = c(32, 53), expand = FALSE) +
+  theme_minimal()
 
 ### Proportion
 # Fresh Air Fund proportion
