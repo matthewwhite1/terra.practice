@@ -40,7 +40,7 @@ ggplot() +
   geom_sf(data = north_america, fill = "grey95", color = "black", size = 0.2) +
   geom_sf(data = us_states, fill = NA, color = "darkgray", size = 0.3) +
   geom_sf(data = canada_provinces, fill = NA, color = "darkgray", size = 0.3) +
-  geom_sf(data = rapp_sf, color = "orange") +
+  geom_sf(data = rapp_sf, color = "orange", size = 3) +
   coord_sf(xlim = c(-90, -60), ylim = c(32, 53), expand = FALSE) +
   theme_minimal()
 
@@ -95,9 +95,9 @@ ggplot(rapp_props_df, aes(Year, Mean, color = Period)) +
   theme_bw() +
   scale_x_continuous(breaks = seq(1950, 2100, by = 25)) +
   scale_y_continuous("Proportion", breaks = seq(0, 0.3, by = 0.05), limits = c(0, 0.3)) +
-  scale_color_manual(values = c("blue", "red"), breaks = c("Historical", "Future")) +
+  scale_color_manual(values = c("#d95f02", "#7570b3"), breaks = c("Historical", "Future")) +
   facet_wrap(~ Site) +
-  ggtitle("Proportion of Ideal Sap Days at Different Maple Sites") +
+  # ggtitle("Proportion of Ideal Sap Days at Different Maple Sites") +
   theme(plot.title = element_text(hjust = 0.5))
 
 

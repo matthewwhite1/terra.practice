@@ -73,11 +73,12 @@ ggplot() +
   geom_sf(data = us_states, fill = NA, color = "darkgray", size = 0.3) +
   geom_sf(data = canada_provinces, fill = NA, color = "darkgray", size = 0.3) +
   geom_sf(data = eco_regions_joined, mapping = aes(fill = sig_mean)) +
+  geom_sf(data = farms_sf, color = "black", size = 1.5) +
   coord_sf(xlim = c(-98, -60), ylim = c(32, 53), expand = FALSE) +
   scale_fill_viridis_c(name = "Significance Proportion", option = "plasma") +
   theme_minimal() +
   labs(
-    title = "Significance of Sens Slope at Maple Farms",
+    # title = "Significance of Sens Slope at Maple Farms",
     x = "Longitude",
     y = "Latitude"
   ) +
