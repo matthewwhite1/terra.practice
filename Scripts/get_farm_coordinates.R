@@ -5,12 +5,26 @@ library(sf)
 
 # Get farms coordinates
 farms <- read.csv("Data_Clean/farms.csv")
-farms_coords <- tidygeocoder::geocode(farms[, -1], address = address)
+farms_coords <- tidygeocoder::geocode(farms, address = address)
 farms_coords_valid <- farms_coords |>
   filter(!is.na(lat))
+farms_coords_invalid <- farms_coords |>
+  filter(is.na(lat))
+
+# Get coordinates of streets for invalid coordinates
+farms_coords_invalid <- farms_coords_invalid |>
+  mutate(address = str_remove(address, "^\\d+\\s")) |>
+  mutate(address = str_remove(address, ",.+,")) |>
+  select(-c(lat, long))
+farms_coords_2 <- tidygeocoder::geocode(farms_coords_invalid, address = address)
+farms_coords_2 <- farms_coords_2 |>
+  filter(!is.na(lat))
+
+# Combine into valid coords
+farms_combined <- rbind(farms_coords_valid, farms_coords_2)
 
 # Write coordinates
-write.csv(farms_coords_valid, "Data_Clean/farms_coords.csv")
+write.csv(farms_combined, "Data_Clean/farms_coords.csv")
 
 # Read coordinates
 farms_coords_valid <- read.csv("Data_Clean/farms_coords.csv")
@@ -74,7 +88,7 @@ ggplot() +
   geom_sf(data = canada_provinces, fill = NA, color = "darkgray", size = 0.3) +
   geom_sf(data = eco_regions_joined, mapping = aes(fill = sig_mean)) +
   geom_sf(data = farms_sf, color = "black", size = 1.5) +
-  coord_sf(xlim = c(-98, -60), ylim = c(32, 53), expand = FALSE) +
+  coord_sf(xlim = c(-99, -59), ylim = c(32, 53), expand = FALSE) +
   scale_fill_viridis_c(name = "Significance Proportion", option = "plasma") +
   theme_minimal() +
   labs(
