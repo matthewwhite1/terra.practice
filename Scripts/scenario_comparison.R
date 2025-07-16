@@ -1,26 +1,67 @@
 ### Within scenario ssp585, first run of first three LOCA2 models
 # Define stuff
 models <- c("ACCESS-CM2", "ACCESS-ESM1-5", "AWI-CM-1-1-MR")
-ssp585_sap <- vector("list", 3)
 k_upper <- 2.2 + 273.15
 k_lower <- -1.1 + 273.15
 
 ## Create sap days for all models
-for (i in 1:3) {
+for (i in 3) {
   # Load in rasters
   path <- paste0("D:/Data/LOCA2/", models[i], "/0p0625deg/r1i1p1f1")
   loca_rast <- loca_t_rast(path)
 
   # Calculate sap days for model
   model_sap_day <- sap_day(loca_rast$tmax, loca_rast$tmin, k_upper, k_lower)
-  ssp585_sap[[i]] <- model_sap_day
 
   # Write rasters to drive
   propname <- paste0("D:/Data/LOCA2/", models[i], "_run1_ssp585_prop.tif")
   terra::writeRaster(model_sap_day$proportion, propname)
   sumname <- paste0("D:/Data/LOCA2/", models[i], "_run1_ssp585_sum.tif")
   terra::writeRaster(model_sap_day$sum, sumname)
+
+  # Garbage collection
+  terra::tmpFiles(current = TRUE, orphan = TRUE, old = TRUE, remove = TRUE)
+  gc()
+  rm(loca_rast)
+  rm(model_sap_day)
 }
+
+### Between scenarios for "ACCESS-CM2"
+# Define stuff
+scenarios <- c("ssp245", "ssp370")
+
+## Create sap days for all models
+for (i in 1:3) {
+  for (j in 1:2) {
+    # Load in rasters
+    path <- paste0("D:/Data/LOCA2/", models[i], "/0p0625deg/r1i1p1f1")
+    loca_rast <- loca_t_rast(path, c("historical", scenarios[j]))
+
+    # Calculate sap days for model
+    model_sap_day <- sap_day(loca_rast$tmax, loca_rast$tmin, k_upper, k_lower)
+
+    # Write rasters to drive
+    propname <- paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_prop.tif")
+    terra::writeRaster(model_sap_day$proportion, propname)
+    propname <- paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_sum.tif")
+    terra::writeRaster(model_sap_day$sum, sumname)
+
+    # Garbage collection
+    terra::tmpFiles(current = TRUE, orphan = TRUE, old = TRUE, remove = TRUE)
+    gc()
+    rm(loca_rast)
+    rm(model_sap_day)
+  }
+}
+
+
+
+
+
+
+
+
+
 
 ## Calculate within scenario mean and variance
 # Define stuff
