@@ -46,5 +46,11 @@ for (i in seq_along(farm_links)) {
   addresses <- c(addresses, farm_address)
 }
 
+# Remove country for geocoding
+addresses <- stringr::str_remove(addresses, ", Canada")
+
 # Create data frame
-quebec_farms <- data.frame(farm = names, address = addresses)
+quebec_farms <- data.frame(farm = names, address = addresses, state = rep(NA, 85), region = rep(NA, 85))
+
+# Write csv
+write.csv(quebec_farms, "Data_Clean/quebec_farms.csv")
