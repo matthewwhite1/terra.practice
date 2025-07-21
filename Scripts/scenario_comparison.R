@@ -5,7 +5,7 @@ k_upper <- 2.2 + 273.15
 k_lower <- -1.1 + 273.15
 
 ## Create sap days for all models
-for (i in 3) {
+for (i in 1:3) {
   # Load in rasters
   path <- paste0("D:/Data/LOCA2/", models[i], "/0p0625deg/r1i1p1f1")
   loca_rast <- loca_t_rast(path)
@@ -31,7 +31,7 @@ for (i in 3) {
 scenarios <- c("ssp245", "ssp370")
 
 ## Create sap days for all models
-for (i in 1:3) {
+for (i in 1:2) {
   for (j in 1:2) {
     # Load in rasters
     path <- paste0("D:/Data/LOCA2/", models[i], "/0p0625deg/r1i1p1f1")
@@ -43,7 +43,7 @@ for (i in 1:3) {
     # Write rasters to drive
     propname <- paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_prop.tif")
     terra::writeRaster(model_sap_day$proportion, propname)
-    propname <- paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_sum.tif")
+    sumname <- paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_sum.tif")
     terra::writeRaster(model_sap_day$sum, sumname)
 
     # Garbage collection
@@ -54,7 +54,11 @@ for (i in 1:3) {
   }
 }
 
-
+###### Get PRISM historical
+prism_rast <- prism_t_rast("D:/Data/PRISM/")
+prism_sap <- sap_day(prism_rast$tmax, prism_rast$tmin)
+terra::writeRaster(prism_sap$proportion, "D:/Data/PRISM_prop.tif")
+terra::writeRaster(prism_sap$sum, "D:/Data/PRISM_sum.tif")
 
 
 

@@ -68,10 +68,6 @@ sap_day <- function(tmax_rast, tmin_rast, t_upper = 2.2, t_lower = -1.1) {
 
     # Print year for progress
     message(paste0("Successfully calculated proportion and sum of sap days for year ", unique_years[i]))
-
-    # Garbage collection
-    terra::tmpFiles(current = TRUE, orphan = TRUE, old = TRUE, remove = TRUE)
-    gc()
   }
 
   # Combine rasters into one with layer for each year
