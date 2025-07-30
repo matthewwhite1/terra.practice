@@ -54,3 +54,32 @@ for (i in 1:2) {
 # Create data frame
 models_comparison <- data.frame(model = model_names, scenario = scenario_names, distance = distances)
 write.csv(models_comparison, "Data_Clean/models_comparison.csv")
+
+# Read data frame
+models_comparison <- read.csv("Data_Clean/models_comparison.csv")
+
+# Read in all six rasters
+loca_sap_rasts <- list()
+models <- c("ACCESS-CM2", "ACCESS-ESM1-5")
+scenarios <- c("ssp245", "ssp370", "ssp585")
+count <- 1
+# For each model...
+for (i in 1:2) {
+  # For each scenario...
+  for (j in 1:3) {
+    # Load in LOCA2 sap day proportion raster
+    loca_sap_rasts[[count]] <- terra::rast(paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_prop.tif")) |>
+      terra::shift(dx = -360)
+    count <- count + 1
+  }
+}
+
+# Compute weighted average raster
+loca_sap_weighted <- loca_sap_rasts[[1]] * models_comparison$distance[1]
+for (i in 2:6) {
+  loca_sap_weighted <- loca_sap_weighted + loca_sap_rasts[[i]] * models_comparison$distance[i]
+}
+loca_sap_weighted <- loca_sap_weighted / sum(models_comparison$distance)
+
+# Save weighted average raster
+terra::writeRaster(loca_sap_weighted, "D:/Data/LOCA2/loca_sap_weighted.tif")

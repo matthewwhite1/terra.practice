@@ -37,16 +37,17 @@ for (i in 1:2) {
     path <- paste0("D:/Data/LOCA2/", models[i], "/0p0625deg/r1i1p1f1")
     loca_rast <- loca_t_rast(path, c("historical", scenarios[j]))
 
+    # Try smaller subset
     # Calculate sap days for model
     model_sap_day <- sap_day(loca_rast$tmax, loca_rast$tmin, k_upper, k_lower)
 
     # Write rasters to drive
     propname <- paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_prop.tif")
-    terra::writeRaster(model_sap_day$proportion, propname)
+    terra::writeRaster(model_sap_day$proportion, propname, overwrite = TRUE)
     sumname <- paste0("D:/Data/LOCA2/", models[i], "_run1_", scenarios[j], "_sum.tif")
-    terra::writeRaster(model_sap_day$sum, sumname)
+    terra::writeRaster(model_sap_day$sum, sumname, overwrite = TRUE)
 
-    # Garbage collection
+    # Free up memory
     terra::tmpFiles(current = TRUE, orphan = TRUE, old = TRUE, remove = TRUE)
     gc()
     rm(loca_rast)
