@@ -75,11 +75,12 @@ for (i in 1:2) {
 }
 
 # Compute weighted average raster
-loca_sap_weighted <- loca_sap_rasts[[1]] * models_comparison$distance[1]
+weights <- 1 / models_comparison$distance
+loca_sap_weighted <- loca_sap_rasts[[1]] * weights[1]
 for (i in 2:6) {
-  loca_sap_weighted <- loca_sap_weighted + loca_sap_rasts[[i]] * models_comparison$distance[i]
+  loca_sap_weighted <- loca_sap_weighted + loca_sap_rasts[[i]] * weights[i]
 }
-loca_sap_weighted <- loca_sap_weighted / sum(models_comparison$distance)
+loca_sap_weighted <- loca_sap_weighted / sum(weights)
 
 # Save weighted average raster
 terra::writeRaster(loca_sap_weighted, "D:/Data/LOCA2/loca_sap_weighted.tif")
