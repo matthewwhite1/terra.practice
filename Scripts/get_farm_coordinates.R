@@ -4,6 +4,7 @@ library(rnaturalearthdata)
 library(sf)
 library(terra)
 library(ggOceanMaps)
+library(tigris)
 
 # Get farms coordinates
 farms <- read.csv("Data_Clean/farms.csv")
@@ -144,6 +145,42 @@ ggplot() +
   geom_sf(data = us_states, fill = NA, color = "gray90", size = 0.3) +
   geom_sf(data = canada_provinces, fill = NA, color = "gray90", size = 0.3) +
   scale_fill_viridis_c(name = "Significance Proportion", option = "plasma", na.value = "darkgray") +
+  theme_minimal() +
+  labs(
+    # title = "Significance of Sens Slope at Maple Farms",
+    x = "Longitude",
+    y = "Latitude"
+  ) +
+  theme(legend.position = "inside",
+        legend.position.inside = c(0.9, 0.22))
+
+### Counties plot
+# Get counties
+us_counties <- counties(cb = TRUE, year = 2020)
+
+# Join sf objects
+farms_sf <- st_transform(farms_sf, st_crs(us_counties))
+farms_joined <- st_join(farms_sf, us_counties, join = st_within)
+
+# Calculate mean proportion by region
+farm_sig_mean <- farms_joined |>
+  st_drop_geometry() |>
+  group_by(GEOID) |>
+  summarize(sig_mean = mean(significant),
+            elev_mean = mean(elevation))
+
+# Rejoin back into counties table
+us_counties_joined <- right_join(us_counties, farm_sig_mean, by = "GEOID")
+
+# Plot
+ggplot() +
+  geom_sf(data = north_america, fill = "grey95", color = "black", size = 0.2) +
+  geom_sf(data = us_states, fill = NA, color = "darkgray", size = 0.3) +
+  geom_sf(data = canada_provinces, fill = NA, color = "darkgray", size = 0.3) +
+  geom_sf(data = us_counties_joined, mapping = aes(fill = sig_mean)) +
+  geom_sf(data = farms_sf, color = "black", size = 1) +
+  coord_sf(xlim = c(-99, -59), ylim = c(32, 53), expand = FALSE) +
+  scale_fill_viridis_c(name = "Significance Proportion", option = "plasma") +
   theme_minimal() +
   labs(
     # title = "Significance of Sens Slope at Maple Farms",
