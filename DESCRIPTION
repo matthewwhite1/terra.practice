@@ -18,6 +18,10 @@ Imports:
     httr,
     terra,
     lubridate,
-    RCurl
+    RCurl,
+    ggplot2,
+    rnaturalearth,
+    sf,
+    trend
 LinkingTo: 
     Rcpp

@@ -37,6 +37,9 @@ for (i in 1:nrow(farms_props)) {
   }
 }
 
+# (Optional) read from csv
+farms_props <- read_csv("Data_Clean/farms_props_sens_average.csv")
+
 # Get North America map
 crop_lims <- c(xmin = -99, ymin = 32, xmax = -59, ymax = 53)
 world <- ne_countries(scale = "medium", returnclass = "sf")

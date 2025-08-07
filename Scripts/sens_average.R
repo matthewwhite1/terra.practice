@@ -4,50 +4,50 @@ library(rnaturalearthdata)
 library(sf)
 library(terra)
 
-# Define stuff
-models <- c("ACCESS-CM2", "ACCESS-ESM1-5")
-scenarios <- c("ssp245", "ssp370", "ssp585")
+# Define empty vector
 significants <- c()
 
 # Read coordinates
 farms_coords_valid <- read.csv("Data_Clean/farms_coords.csv")
 
-# For each model...
-for (model in 1:2) {
-  # For each scenario...
-  for (scenario in 1:3) {
-    # Load in LOCA2 sap day proportion raster
-    loca_sap_prop <- terra::rast(paste0("Data_Raw/LOCA2_Rasters/", models[model], "_run1_", scenarios[scenario], "_prop.tif")) |>
-      terra::shift(dx = -360)
+# Read in elevation
+elevation <- terra::rast("Data_Clean/elevation.LOCA_2016-04-02.nc")
+farms_locations <- terra::vect(data.frame(lon = farms_coords_valid$long, lat = farms_coords_valid$lat))
+elevation_values <- terra::extract(elevation, farms_locations)$Elevation
 
-    # Extract sap day proportions at farm locations
-    farms_locations <- terra::vect(data.frame(lon = farms_coords_valid$long, lat = farms_coords_valid$lat))
-    farms_props <- terra::extract(loca_sap_prop, farms_locations)
-    elevation <- terra::rast("Data_Clean/elevation.LOCA_2016-04-02.nc")
-    elevation_values <- terra::extract(elevation, farms_locations)$Elevation
-    farms_props$elevation <- elevation_values
-    names(farms_props)[1] <- "Farm"
-    farms_props$Farm <- farms_coords_valid$farm
-    farms_props <- farms_props |>
-      dplyr::mutate(lon = farms_coords_valid$long, lat = farms_coords_valid$lat) |>
-      dplyr::filter(!is.na(`1950`))
+# Define sap prop file locations
+loca_sap_props <- list.files("Data_Raw/LOCA2_Rasters", full.names = TRUE)
 
-    # Calculate sens slope for each location
-    farms_props$significant <- rep(0, nrow(farms_props))
-    for (i in 1:nrow(farms_props)) {
-      slope <- trend::sens.slope(as.numeric(farms_props[i, 2:152]))
-      if (slope$p.value < 0.05) {
-        if (slope$estimates < 0) {
-          farms_props$significant[i] <- -1
-        } else {
-          farms_props$significant[i] <- 1
-        }
+# For each sap prop file...
+for (i in seq_along(loca_sap_props)) {
+  # Read in file
+  loca_sap_prop <- terra::rast(loca_sap_props[i]) |>
+    terra::shift(dx = -360)
+
+  # Extract sap day proportions at farm locations
+  farms_props <- terra::extract(loca_sap_prop, farms_locations)
+  farms_props$elevation <- elevation_values
+  names(farms_props)[1] <- "Farm"
+  farms_props$Farm <- farms_coords_valid$farm
+  farms_props <- farms_props |>
+    dplyr::mutate(lon = farms_coords_valid$long, lat = farms_coords_valid$lat) |>
+    dplyr::filter(!is.na(`1950`))
+
+  # Calculate sens slope for each location
+  farms_props$significant <- rep(0, nrow(farms_props))
+  for (i in 1:nrow(farms_props)) {
+    slope <- trend::sens.slope(as.numeric(farms_props[i, 2:152]))
+    if (slope$p.value < 0.05) {
+      if (slope$estimates < 0) {
+        farms_props$significant[i] <- -1
+      } else {
+        farms_props$significant[i] <- 1
       }
     }
-
-    # Save values to significants vector
-    significants <- c(significants, farms_props$significant)
   }
+
+  # Save values to significants vector
+  significants <- c(significants, farms_props$significant)
 }
 
 # Condense significants vector
@@ -59,6 +59,12 @@ for (i in seq_len(my_len)) {
 
 # Create new farm props
 farms_props$significant <- new_significant
+
+# Export to use later
+write_csv(farms_props, "Data_Clean/farms_props_sens_average.csv")
+
+# Read back in
+farms_props <- read_csv("Data_Clean/farms_props_sens_average.csv")
 
 # Get North America map
 crop_lims <- c(xmin = -99, ymin = 32, xmax = -59, ymax = 53)
