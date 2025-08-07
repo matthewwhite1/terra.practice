@@ -65,6 +65,80 @@ terra::writeRaster(prism_sap$sum, "D:/Data/PRISM_sum.tif")
 
 
 
+##### Get some more sap rasters
+models <- c("ACCESS-CM2", "ACCESS-ESM1-5")
+k_upper <- 2.2 + 273.15
+k_lower <- -1.1 + 273.15
+scenarios <- c("ssp245", "ssp370", "ssp585")
+
+# For each model...
+for (i in 1:2) {
+  # For each run...
+  for (j in 2:3) {
+    # For each scenario...
+    for (h in 1:3) {
+      # Load in rasters
+      path <- paste0("D:/Data/LOCA2/", models[i], "/0p0625deg/r", j, "i1p1f1")
+      loca_rast <- loca_t_rast(path, c("historical", scenarios[h]))
+
+      # Calculate sap days for model
+      model_sap_day <- sap_day(loca_rast$tmax, loca_rast$tmin, k_upper, k_lower)
+
+      # Write rasters to drive
+      propname <- paste0("D:/Data/LOCA2/", models[i], "_run", j, "_", scenarios[h], "_prop.tif")
+      terra::writeRaster(model_sap_day$proportion, propname, overwrite = TRUE)
+      sumname <- paste0("D:/Data/LOCA2/", models[i], "_run", j, "_", scenarios[h], "_sum.tif")
+      terra::writeRaster(model_sap_day$sum, sumname, overwrite = TRUE)
+
+      # Free up memory
+      terra::tmpFiles(current = TRUE, orphan = TRUE, old = TRUE, remove = TRUE)
+      gc()
+      rm(loca_rast)
+      rm(model_sap_day)
+    }
+  }
+}
+
+# For each scenario...
+for (i in 1:3) {
+  # Load in rasters
+  path <- "D:/Data/LOCA2/BCC-CSM2-MR/0p0625deg/r1i1p1f1"
+  loca_rast <- loca_t_rast(path, c("historical", scenarios[i]))
+
+  # Calculate sap days for model
+  model_sap_day <- sap_day(loca_rast$tmax, loca_rast$tmin, k_upper, k_lower)
+
+  # Write rasters to drive
+  propname <- paste0("D:/Data/LOCA2/BCC-CSM2-MR_run1_", scenarios[i], "_prop.tif")
+  terra::writeRaster(model_sap_day$proportion, propname, overwrite = TRUE)
+  sumname <- paste0("D:/Data/LOCA2/BCC-CSM2-MR_run1_", scenarios[i], "_sum.tif")
+  terra::writeRaster(model_sap_day$sum, sumname, overwrite = TRUE)
+
+  # Free up memory
+  terra::tmpFiles(current = TRUE, orphan = TRUE, old = TRUE, remove = TRUE)
+  gc()
+  rm(loca_rast)
+  rm(model_sap_day)
+}
+
+# Load in rasters
+path <- "D:/Data/LOCA2/CESM2-LENS/0p0625deg/r1i1p1f1"
+loca_rast <- loca_t_rast(path, c("historical", "ssp370"))
+
+# Calculate sap days for model
+model_sap_day <- sap_day(loca_rast$tmax, loca_rast$tmin, k_upper, k_lower)
+
+# Write rasters to drive
+propname <- "D:/Data/LOCA2/CESM2-LENS_run1_ssp370_prop.tif"
+terra::writeRaster(model_sap_day$proportion, propname, overwrite = TRUE)
+sumname <- "D:/Data/LOCA2/CESM2-LENS_run1_ssp370_sum.tif"
+terra::writeRaster(model_sap_day$sum, sumname, overwrite = TRUE)
+
+# Free up memory
+terra::tmpFiles(current = TRUE, orphan = TRUE, old = TRUE, remove = TRUE)
+gc()
+rm(loca_rast)
+rm(model_sap_day)
 
 
 
