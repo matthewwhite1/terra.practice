@@ -2,34 +2,24 @@
 % Please edit documentation in R/get_sens_farms.R
 \name{get_sens_farms}
 \alias{get_sens_farms}
-\title{Get an sf data frame of maple farms' sen's slope grouped by shapefile variable}
+\title{Get the Sen's slope estimate and p-value given an sf dataframe of farm locations}
 \usage{
-get_sens_farms(farms_coords, shapefile, variable, sap_prop)
+get_sens_farms(farms_coords, sap_prop)
 }
 \arguments{
 \item{farms_coords}{An sf dataframe containing farms and their coordinates.}
 
-\item{shapefile}{An sf dataframe containing geographical shape boundaries}
-
-\item{variable}{A character vector of length 1 containing the name of the
-variable within the shapefile dataframe to group by.}
-
 \item{sap_prop}{A terra SpatRaster containing yearly sap day proportion
-rasters.}
+rasters, probably calculated from \code{\link[=sap_day]{sap_day()}}.}
 }
 \value{
-An sf dataframe that contains the significance averages for each group
-and the corresponding shapefile boundaries - this can be plotted with
-something like ggplot.
+An sf dataframe containing the time series of sap day proportions
+for each year, the geometry, the Sen's slope estimate, and the Sen's slope
+p-value.
 }
 \description{
 This function takes an sf dataframe of (assumed) farm coordinates. Then, it
 extracts the time series of yearly sap day proportions for each farm. Sen's
-slope is calculated for each time series, and a significance variable is
-created that is 1 if the slope is significant-positive, -1 if the slope is
-negative-significant, and 0 if the slope is not significant. Then, the
-farms are grouped by variable in the shapefile, and the average of the
-significance value is taken for each group. A dataframe is returned that
-contains the significance averages for each group and the corresponding
-shapefile boundaries - this can be plotted with something like ggplot.
+slope is calculated for each time series. The slope estimate and p-value are
+added as columns to the extracted data frame.
 }
