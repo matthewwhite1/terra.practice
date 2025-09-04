@@ -75,15 +75,25 @@ download_loca2 <- function(model,
 
     # For each given run...
     for (given_run in run) {
-      # Create run URL
-      run_full <- paste0("r", given_run, "i1p1f1/")
-      model_url <- paste0(base_url, given_model, "/0p0625deg/", run_full)
+      # Check for what run folders exist
+      run_url <- paste0(base_url, given_model, "/0p0625deg/")
+      run_page <- httr::GET(run_url)
+      run_pagehtml <- XML::htmlParse(run_page)
+      run_nodes <- XML::getNodeSet(run_pagehtml, "//table")
+      run_table <- XML::readHTMLTable(run_nodes[[1]])
+      run_table <- run_table[, -1] |>
+        dplyr::filter(!is.na(Name) & Name != "Parent Directory")
+      run_names <- run_table$Name
 
       # Throw an error if run doesn't exist
-      if (!RCurl::url.exists(model_url)) {
+      run_folder <- run_names[stringr::str_detect(run_names, paste0("^r", given_run))]
+      if (length(run_folder) == 0) {
         warning(paste0("Run number ", given_run, " for model ", given_model, " does not exist."))
         next
       }
+
+      # Create run URL
+      model_url <- paste0(base_url, given_model, "/0p0625deg/", run_folder)
 
       # For both historical and future...
       for (period in scenario) {
@@ -99,7 +109,7 @@ download_loca2 <- function(model,
         # For each variable...
         for (var_name in var) {
           # Create variable directory
-          var_dir <- file.path(model_dir, "0p0625deg", run_full, period, var_name)
+          var_dir <- file.path(model_dir, "0p0625deg", run_folder, period, var_name)
           dir.create(var_dir, recursive = TRUE)
 
           # Find desired files
