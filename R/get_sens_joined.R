@@ -54,14 +54,14 @@ get_sens_joined <- function(farms_sf, shapefile, variable, sap_prop) {
   shapefile_joined
 }
 
-farms_coords <- read_csv("Data_Clean/farms_coords.csv")
-farms_coords <- st_as_sf(farms_coords, coords = c("long", "lat"), crs = 4326)
-shapefile <- read_sf("Data_Clean/NA_Eco_Level3/NA_CEC_Eco_Level3.shp")
-variable <- names(shapefile)[2]
-sap_prop <- terra::rast("../loca_sap_weighted.tif")
-
-farms_coords <- read_csv("Data_Clean/farms_coords.csv")
-farms_coords <- st_as_sf(farms_coords, coords = c("long", "lat"), crs = 4326)
-shapefile <- counties(cb = TRUE, year = 2020)
-variable <- "GEOID"
-sap_prop <- terra::rast("../loca_sap_weighted.tif")
+# farms_coords <- read_csv("Data_Clean/farms_coords.csv")
+# farms_coords <- st_as_sf(farms_coords, coords = c("long", "lat"), crs = 4326)
+# shapefile <- read_sf("Data_Clean/NA_Eco_Level3/NA_CEC_Eco_Level3.shp")
+# variable <- names(shapefile)[2]
+# sap_prop <- terra::rast("../loca_sap_weighted.tif")
+#
+# farms_coords <- read_csv("Data_Clean/farms_coords.csv")
+# farms_coords <- st_as_sf(farms_coords, coords = c("long", "lat"), crs = 4326)
+# shapefile <- counties(cb = TRUE, year = 2020)
+# variable <- "GEOID"
+# sap_prop <- terra::rast("../loca_sap_weighted.tif")
